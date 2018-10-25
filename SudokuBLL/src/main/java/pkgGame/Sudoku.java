@@ -1,6 +1,19 @@
+/*
+Lauren Griffith
+Tejas Patel
+Mengqi Zhang
+Ahmed
+*/
+
+
+
 package pkgGame;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Random;
 
 import pkgHelper.LatinSquare;
@@ -314,7 +327,7 @@ public class Sudoku extends LatinSquare {
 	 * @version 1.3
 	 * @since Lab #3
 	 */
-	private void FillDiagonalRegions() {
+	public void FillDiagonalRegions() {
 
 		for (int i = 0; i < iSize; i = i + iSqrtSize) {
 			System.out.println("Filling region: " + getRegionNbr(i, i));
@@ -410,4 +423,174 @@ public class Sudoku extends LatinSquare {
 			ar[i] = a;
 		}
 	}
+	
+		
+	private class Cell {
+			private int iRow;
+			private int iCol;
+			private ArrayList<Integer> lstValidValues =new ArrayList<Integer>();
+
+			
+			public Cell(int iRow, int iCol) {
+				super();
+				this.iRow=iRow;
+				this.iCol= iCol;
+			}
+			
+			public int getiRow() {
+				return iRow;
+			}
+			
+			public int getiCol() {
+				return iCol;
+			}
+
+			@Override
+			public int hashCode() {
+				return Objects.hash(iRow,iCol);
+			}
+			
+			@Override
+			public boolean equals(Object o) {
+				if (o==this)
+					return true;
+				
+				if (!(o instanceof Cell)) {
+					return false;
+				}
+				Cell c=(Cell) o;
+				return iCol==c.iCol && iRow == c.iRow;
+			}
+			
+			public ArrayList<Integer> getlstValidValues(){
+				return lstValidValues;
+			}
+			
+			
+			
+			public void setlstValidValues() {
+				HashSet<Integer> validHash = new HashSet<Integer>();
+				for (int i = 1; i <= iSize; i++) {
+					if (isValidValue(iRow, iCol, i)) {
+						validHash.add(i);
+					}
+				}
+				lstValidValues = new ArrayList<Integer>(validHash);
+				lstValidValues.trimToSize();
+
+			}
+
+			
+			public void shuffleValidValues() {
+				Collections.shuffle(lstValidValues);
+			}
+			
+
+			
+			public Sudoku.Cell GetNextCell(Sudoku.Cell c, int iSize) {
+				if (iCol < iSize - 1) {
+					Sudoku.Cell nextCell = new Sudoku.Cell(iRow, iCol + 1);
+					return nextCell;
+				} else {
+					Sudoku.Cell nextCell = new Sudoku.Cell(iRow + 1, 0);
+					return nextCell;
+				}
+
+			}
+
+			
+		}
+			
+
+	public enum ePuzzleViolation {
+
+		DupRow, DupCol, DupRegion, InvalidValue, ContainsZero, MissingZero;
+	}
+			
+
+			public boolean isValidColumnValue(int iCol, int iValue) {
+
+				if (doesElementExist(super.getColumn(iCol), iValue))
+
+					return false;
+
+				return true;
+
+			}
+
+
+
+			public boolean isValidRowValue(int iRow, int iValue) {
+
+				if (doesElementExist(super.getRow(iRow), iValue))
+
+					return false;
+
+				return true;
+
+			}
+
+			public boolean isValidRegionValue(int iRow, int iCol, int iValue) {
+
+				if (doesElementExist(this.getRegion(iCol, iRow), iValue))
+
+					return false;
+
+				return true;
+
+			}
+			
+			public void SetCells() {
+				for (int iRow = 0; iRow < iSize; iRow++) {
+					for (int iCol = 0; iCol < iSize; iCol++) {
+						Sudoku.Cell newCell = new Sudoku.Cell(iRow, iCol);
+						newCell.getlstValidValues();
+						newCell.shuffleValidValues();
+						Cell.put(newCell.hashCode(), newCell);
+					}
+				}
+			}
+			
+			public HashSet<Integer> getAllValidCellValues(int iRow, int iCol) {
+				Cell newCell = new Cell(iRow, iCol);
+				newCell.setlstValidValues();
+				HashSet<Integer> cellHashSet = new HashSet<Integer>(newCell.getLstValidValues());
+				return cellHashSet;
+
+			}
+			public HashSet<Integer> getAllValidCellValues(Cell newCell, int iRow, int iCol) {
+				newCell.setlstValidValues();
+				HashSet<Integer> cellHashSet = new HashSet<Integer>(newCell.getLstValidValues());
+				return cellHashSet;
+			}
+
+
+	
 }
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
